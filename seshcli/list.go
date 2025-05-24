@@ -82,8 +82,13 @@ func List(icon icon.Icon, json json.Json, list lister.Lister) *cli.Command {
 				return nil
 			}
 
+			mapShowedSessions := make(map[string]bool)
 			for _, i := range sessions.OrderedIndex {
 				name := sessions.Directory[i].Name
+				if _, ok := mapShowedSessions[name]; ok {
+					continue
+				}
+				mapShowedSessions[name] = true
 				if cCtx.Bool("icons") {
 					name = icon.AddIcon(sessions.Directory[i])
 				}

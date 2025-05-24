@@ -21,6 +21,7 @@ type (
 		Name                string `toml:"name"`
 		Path                string `toml:"path"`
 		DisableStartCommand bool   `toml:"disable_startup_command"`
+		WithChild           bool   `toml:"with_child"`
 		DefaultSessionConfig
 	}
 )
