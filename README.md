@@ -56,7 +56,7 @@ yay -S sesh-bin
 Alternatively, you can install Sesh using Go's go install command:
 
 ```sh
-go install github.com/joshmedeski/sesh@latest
+go install github.com/joshmedeski/sesh/v2@latest
 ```
 
 This will download and install the latest version of Sesh. Make sure that your Go environment is properly set up.
@@ -140,6 +140,9 @@ bind-key "K" display-popup -E -w 40% "sesh connect \"$(
 
 **Note:** There are less features available with gum compared to fzf, but I found its matching algorithm is faster and it has a more modern feel.
 
+> [!WARNING]
+> As of [gum v0.15.0](https://github.com/charmbracelet/gum/releases/tag/v0.15.0) you have to add the `--no-strip-ansi` in order to display the icons correctly.
+
 See my video, [Top 4 Fuzzy CLIs](https://www.youtube.com/watch?v=T0O2qrOhauY) for more inspiration for tooling that can be integrated with sesh.
 
 ## zsh keybind
@@ -220,6 +223,17 @@ You can configure sesh by creating a `sesh.toml` file in your `$XDG_CONFIG_HOME/
 mkdir -p ~/.config/sesh && touch ~/.config/sesh/sesh.toml
 ```
 
+### Blacklist
+
+You may want to blacklist certain tmux sessions from showing up in the results. For example, you may want to exclude your `scratch` directory from the results.
+
+```sh
+blacklist = ["scratch"]
+```
+
+> [!NOTE] 
+> Works great with [tmux-floatx](https://github.com/omerxx/tmux-floax)
+
 ### Default Session
 
 The default session can be configured to run a command when connecting to a session. This is useful for running a dev server or starting a tmux plugin.
@@ -287,10 +301,4 @@ Made with [contrib.rocks](https://contrib.rocks).
 
 ## Star History
 
-<a href="https://star-history.com/#joshmedeski/sesh&Date">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=joshmedeski/sesh&type=Date&theme=dark" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=joshmedeski/sesh&type=Date" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=joshmedeski/sesh&type=Date" />
- </picture>
-</a>
+[![Star History Chart](https://api.star-history.com/svg?repos=joshmedeski/sesh&type=Date)](https://www.star-history.com/#joshmedeski/sesh&Date)
