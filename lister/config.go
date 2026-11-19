@@ -2,6 +2,8 @@ package lister
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 
 	"github.com/joshmedeski/sesh/v2/model"
 )
@@ -38,6 +40,28 @@ func listConfig(l *RealLister) (model.SeshSessions, error) {
 				Alias:                 session.Alias,
 				AliasAutoConnect:      session.AliasAutoConnect,
 				Tmuxp:                 session.Tmuxp,
+			}
+
+			if session.WithChildren {
+				entries, err := os.ReadDir(path)
+				if err != nil {
+					continue
+				}
+				for _, entry := range entries {
+					childPath := filepath.Join(path, entry.Name())
+					info, err := os.Stat(childPath)
+					if err != nil || !info.IsDir() {
+						continue
+					}
+					child := directory[key]
+					child.Name = session.Name + "/" + entry.Name()
+					child.Path = childPath
+					child.Alias = ""
+					child.AliasAutoConnect = false
+					childKey := ConfigKey(child.Name)
+					orderedIndex = append(orderedIndex, childKey)
+					directory[childKey] = child
+				}
 			}
 		}
 	}

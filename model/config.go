@@ -152,6 +152,7 @@ type (
 		Name                string `toml:"name"`
 		Path                string `toml:"path"`
 		DisableStartCommand bool   `toml:"disable_startup_command"`
+		WithChildren        bool   `toml:"with_children"`
 		// Alias is a short, exact-match shortcut for this session. Typing it in
 		// the picker marks the session with a chip, and `sesh connect <alias>`
 		// resolves to this session's name.

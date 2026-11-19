@@ -295,6 +295,11 @@
             "description": "Disable the default startup command and [default_session] panes for this session",
             "default": false
           },
+          "with_children": {
+            "type": "boolean",
+            "description": "Also list every directory directly under `path` as its own session, named `<name>/<child>` and inheriting this session's startup, preview, and window settings. One level only; hidden directories are included.",
+            "default": false
+          },
           "alias": {
             "type": "string",
             "description": "Short exact-match shortcut for this session. Shown as a chip in the picker, and resolved by `sesh connect <alias>`. Must be unique across sessions."

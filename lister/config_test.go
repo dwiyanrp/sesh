@@ -2,6 +2,8 @@ package lister
 
 import (
 	"log"
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/joshmedeski/sesh/v2/home"
@@ -73,4 +75,49 @@ func TestListConfigIncludesAlias(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, "wp", sessions.Directory["config:wallpaper"].Alias)
 	assert.Equal(t, "", sessions.Directory["config:notes"].Alias)
+}
+
+func TestListConfigWithChildren(t *testing.T) {
+	root := t.TempDir()
+	for _, dir := range []string{"alpha", "beta"} {
+		assert.NoError(t, os.Mkdir(filepath.Join(root, dir), 0o755))
+	}
+	assert.NoError(t, os.WriteFile(filepath.Join(root, "file.txt"), nil, 0o644))
+
+	mockHome := new(home.MockHome)
+	mockHome.On("ExpandPath", root).Return(root, nil)
+	config := model.Config{
+		SessionConfigs: []model.SessionConfig{
+			{
+				Name:             "projects",
+				Path:             root,
+				WithChildren:     true,
+				Alias:            "proj",
+				AliasAutoConnect: true,
+				DefaultSessionConfig: model.DefaultSessionConfig{
+					StartupCommand: "nvim",
+				},
+			},
+			{Name: "plain", Path: root},
+		},
+	}
+	lister := NewLister(config, mockHome, new(tmux.MockTmux), new(zoxide.MockZoxide), new(tmuxinator.MockTmuxinator), nil, nil)
+	realLister, ok := lister.(*RealLister)
+	if !ok {
+		t.Fatal("Cannot convert lister to *RealLister")
+	}
+
+	sessions, err := listConfig(realLister)
+	assert.Nil(t, err)
+	assert.Equal(t, []string{
+		"config:projects",
+		"config:projects/alpha",
+		"config:projects/beta",
+		"config:plain",
+	}, sessions.OrderedIndex)
+	assert.Equal(t, filepath.Join(root, "alpha"), sessions.Directory["config:projects/alpha"].Path)
+	assert.Equal(t, "nvim", sessions.Directory["config:projects/alpha"].StartupCommand)
+	assert.Empty(t, sessions.Directory["config:projects/alpha"].Alias)
+	_, found := sessions.Directory["config:projects/file.txt"]
+	assert.False(t, found)
 }
